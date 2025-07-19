@@ -1,0 +1,24 @@
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+}
+.gallery {
+  display: flex;
+  gap: 1rem;
+  max-width: 90vw;
+  flex-wrap: wrap;
+}
+
+.gallery-image {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.3);
+}
