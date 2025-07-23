@@ -90,7 +90,12 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
     if (keys.current['d'] || keys.current['arrowright']) localVelocity.current.x += speed * delta
 
     if (externalVelocity) {
-      localVelocity.current.add(externalVelocity)
+      // Convert to Vector3 if needed
+      let extVel = externalVelocity
+      if (typeof extVel.x === 'number' && typeof extVel.z === 'number') {
+        extVel = new THREE.Vector3(extVel.x, 0, extVel.z)
+      }
+      localVelocity.current.add(extVel)
     }
 
     const isMoving = localVelocity.current.length() > 0.01
@@ -122,6 +127,8 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
 
     if (group.current) {
       group.current.position.add(localVelocity.current)
+      // Make the penguin walk flat
+      group.current.position.y = 0.7
     }
   })
 

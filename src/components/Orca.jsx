@@ -11,21 +11,21 @@ export default function Orca({ penguinRef, position = [-5, 0, -12] }) {
   const setSection = useGameStore(state => state.setSection)
   const lang = useGameStore(state => state.language)
 
-useFrame(() => {
-  if (!penguinRef?.current?.group || !iglooRef.current) return
-  const distance = iglooRef.current.position.distanceTo(penguinRef.current.group.position)
-  if (distance < 3 && !audioPlayed) {
-    const sound = new Audio('/assets/sounds/igloo.mp3')
-    sound.volume = 0.7
-    sound.play()
-    setAudioPlayed(true)
-    setShowText(true)
-    setSection('experiencia')
-  } else if (distance >= 3 && showText) {
-    setShowText(false)
-    setAudioPlayed(false)
-  }
-})
+  useFrame(() => {
+    if (!penguinRef?.current?.group || !orcaRef.current) return
+    const distance = orcaRef.current.position.distanceTo(penguinRef.current.group.position)
+    if (distance < 3 && !audioPlayed) {
+      const sound = new Audio('/assets/sounds/orca.mp3')
+      sound.volume = 0.7
+      sound.play()
+      setAudioPlayed(true)
+      setShowText(true)
+      setSection('educacion')
+    } else if (distance >= 3 && showText) {
+      setShowText(false)
+      setAudioPlayed(false)
+    }
+  })
 
 
   return (
@@ -41,9 +41,11 @@ useFrame(() => {
               boxShadow: '0 0 10px rgba(0,0,0,0.3)',
               fontSize: '1rem',
               maxWidth: '250px',
-              textAlign: 'center'
+              textAlign: 'center',
+              position: 'relative'
             }}
           >
+            <button onClick={() => setShowText(false)} style={{ position: 'absolute', top: 4, right: 8, background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>&times;</button>
             {lang === 'es'
               ? 'Aquí aprendí sobre la vida, el código y el océano. Estudié Fullstack Dev, un máster en Marketing y otro en Branding. También soy licenciado en comunicación social, marketing y guionismo audiovisual.'
               : "Here I learned about life, code, and oceans. I studied Fullstack Dev, hold a master's in Marketing and Branding, and I have a degree in communication, marketing and screenwriting."}

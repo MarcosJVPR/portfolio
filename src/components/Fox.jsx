@@ -13,6 +13,7 @@ export default function Fox() {
   const setSection = useGameStore(state => state.setSection)
   const lang = useGameStore(state => state.language)
   const penguin = useGameStore(state => state.penguin)
+  const penguinRef = useRef()
 
   useEffect(() => {
     const sound = new Audio('/assets/sounds/fox-talk.mp3')
@@ -21,8 +22,8 @@ export default function Fox() {
   }, [])
 
   useFrame(() => {
-    if (!penguin || !group.current) return
-    const distance = penguin.position.distanceTo(group.current.position)
+    if (!penguinRef?.current?.group || !group.current) return
+    const distance = penguinRef.current.group.position.distanceTo(group.current.position)
 
     if (distance < 2) {
       setSection('habilidades')
@@ -41,7 +42,7 @@ export default function Fox() {
 
   return (
     <group ref={group} position={[0, 0, -18]}>
-      <primitive object={scene} />
+      <primitive object={scene} scale={0.25} />
       {showText && (
         <Html position={[0, 2, 0]}>
           <div
@@ -52,9 +53,11 @@ export default function Fox() {
               boxShadow: '0 0 10px rgba(0,0,0,0.3)',
               fontSize: '1rem',
               maxWidth: '250px',
-              textAlign: 'center'
+              textAlign: 'center',
+              position: 'relative'
             }}
           >
+            <button onClick={() => setShowText(false)} style={{ position: 'absolute', top: 4, right: 8, background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>&times;</button>
             {lang === 'es'
               ? 'Manejo React JS, Python, SQL, Three Js, APIs REST, JWT, Bootstrap y más.'
               : 'I use React JS, Python, SQL, Three Js, REST APIs, JWT, Bootstrap and more.'}

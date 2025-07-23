@@ -21,8 +21,9 @@ export default function Joystick() {
       const angle = data.angle.radian
       const force = data.force * 0.05
 
+      // Right is right, up is up, down is down, left is left
       const dx = Math.cos(angle) * force
-      const dz = Math.sin(angle) * force
+      const dz = -Math.sin(angle) * force
 
       setVelocity({ x: dx, z: dz })
     })

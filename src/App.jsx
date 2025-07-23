@@ -19,7 +19,10 @@ function App() {
     bgMusic.volume = 0.4
 
     const playMusic = () => {
-      bgMusic.play().catch(e => console.warn('Autoplay bloqueado:', e))
+      const playPromise = bgMusic.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(e => console.warn('Autoplay bloqueado:', e));
+      }
       document.removeEventListener('click', playMusic)
     }
 
