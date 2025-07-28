@@ -3,7 +3,7 @@ import { useGLTF, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from '../store/useGameStore'
 
-export default function Fox() {
+export default function Fox({ penguinRef, position = [0, 0, 0], scale = 1 }) {
   const group = useRef()
   const { scene } = useGLTF('/assets/models/fox.glb')
   const soundRef = useRef()
@@ -13,7 +13,6 @@ export default function Fox() {
   const setSection = useGameStore(state => state.setSection)
   const lang = useGameStore(state => state.language)
   const penguin = useGameStore(state => state.penguin)
-  const penguinRef = useRef()
 
   useEffect(() => {
     const sound = new Audio('/assets/sounds/fox-talk.mp3')
@@ -41,8 +40,8 @@ export default function Fox() {
   })
 
   return (
-    <group ref={group} position={[0, 0, -18]}>
-      <primitive object={scene} scale={0.25} />
+    <group ref={group} position={position} scale={scale}>
+      <primitive object={scene} />
       {showText && (
         <Html position={[0, 2, 0]}>
           <div

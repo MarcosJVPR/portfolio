@@ -18,11 +18,21 @@ const texts = {
 
 export default function SectionViewer() {
   const { language, section } = useGameStore()
+  const setSection = useGameStore(state => state.setSection)
   const [openImg, setOpenImg] = useState(null)
 
   useEffect(() => {
     if (!section && openImg) setOpenImg(null)
-  }, [section, openImg])
+    // ESC closes SectionViewer and modal
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        setOpenImg(null);
+        setSection(null);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [section, openImg, setSection])
 
   if (!section) return null
   const label = texts[language][section]
@@ -46,6 +56,25 @@ export default function SectionViewer() {
         overflow: 'auto'
       }}
     >
+      {/* Persistent X button to close the SectionViewer, only if modal is not open */}
+      {!openImg && (
+        <button
+          onClick={() => { setOpenImg(null); setSection(null); }}
+          style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            background: 'none',
+            border: 'none',
+            fontSize: '2rem',
+            color: '#333',
+            cursor: 'pointer',
+            zIndex: 1001
+          }}
+        >
+          &times;
+        </button>
+      )}
       <h2>{label}</h2>
 
       {section === 'diseños' && (
@@ -73,7 +102,7 @@ export default function SectionViewer() {
               justifyContent: 'center'
             }}>
               <div style={{ position: 'relative' }}>
-                <button onClick={() => setOpenImg(null)} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: '2rem', color: '#fff', cursor: 'pointer', zIndex: 1001 }}>&times;</button>
+                <button onClick={() => { setOpenImg(null); setSection(null); }} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: '2rem', color: '#fff', cursor: 'pointer', zIndex: 1001 }}>&times;</button>
                 <img src={openImg} alt="zoom" style={{ maxHeight: '80vh', maxWidth: '90vw', borderRadius: '10px' }} />
               </div>
             </div>
@@ -83,7 +112,6 @@ export default function SectionViewer() {
 
       {section === 'experiencia' && (
         <div style={{ marginTop: '1rem', textAlign: 'center', position: 'relative' }}>
-          <button onClick={() => setOpenImg(null)} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: '2rem', color: '#333', cursor: 'pointer', zIndex: 1001 }}>&times;</button>
           <p>{language === 'es' ? 'Aquí está mi currículum:' : 'Here is my resume:'}</p>
           <img
             src='/assets/images/CV.jpg'
@@ -105,7 +133,7 @@ export default function SectionViewer() {
               justifyContent: 'center'
             }}>
               <div style={{ position: 'relative' }}>
-                <button onClick={() => setOpenImg(null)} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: '2rem', color: '#fff', cursor: 'pointer', zIndex: 1001 }}>&times;</button>
+                <button onClick={() => { setOpenImg(null); setSection(null); }} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: '2rem', color: '#fff', cursor: 'pointer', zIndex: 1001 }}>&times;</button>
                 <img src={openImg} alt="zoom" style={{ maxHeight: '80vh', maxWidth: '90vw', borderRadius: '10px' }} />
               </div>
             </div>

@@ -26,6 +26,13 @@ export default function IceIslandScene() {
   const { camera } = useThree()
   const plane = useGLTF('/assets/models/plane.glb')
   const orbitRef = useRef();
+  const orca = useGLTF('/assets/models/orca.glb')
+
+  useEffect(() => {
+    if (orca && orca.scene) {
+      console.log('Orca GLTF scene:', orca.scene)
+    }
+  }, [orca])
 
   const joystickVelocity = useGameStore(state => state.joystickVelocity)
   const setPenguin = useGameStore(state => state.setPenguin)
@@ -34,7 +41,17 @@ export default function IceIslandScene() {
     if (penguinRef.current?.group) {
       setPenguin(penguinRef.current.group)
     }
-  }, [setPenguin])
+    // Spacebar resets camera behind penguin
+    const handleSpace = (e) => {
+      if (e.code === 'Space' && penguinRef.current?.group && camera) {
+        const pos = penguinRef.current.group.position;
+        camera.position.set(pos.x, pos.y + 10, pos.z + 20);
+        camera.lookAt(pos.x, pos.y, pos.z);
+      }
+    };
+    window.addEventListener('keydown', handleSpace);
+    return () => window.removeEventListener('keydown', handleSpace);
+  }, [setPenguin, camera]);
 
   useEffect(() => {
     camera.position.set(0, 15, 25);
@@ -46,6 +63,12 @@ export default function IceIslandScene() {
     if (lightRef.current) {
       lightRef.current.position.x = Math.sin(t * 0.1) * 10
       lightRef.current.position.z = Math.cos(t * 0.1) * 10
+    }
+    // Camera follows penguin but allows orbiting
+    if (penguinRef.current?.group && orbitRef.current) {
+      const pos = penguinRef.current.group.position
+      orbitRef.current.target.set(pos.x, pos.y, pos.z)
+      orbitRef.current.update()
     }
   })
 
@@ -81,7 +104,7 @@ export default function IceIslandScene() {
   return (
     <>
       <Sky sunPosition={[100, 20, 100]} turbidity={8} />
-      <OrbitControls ref={orbitRef} enablePan={false} enableZoom={false} mouseButtons={{ RIGHT: 2 }} />
+      <OrbitControls ref={orbitRef} enablePan={false} enableZoom={true} mouseButtons={{ RIGHT: 2 }} />
       {/* Water ring (flat circle) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.2, 0]}>
         <circleGeometry args={[22, 64]} />
@@ -119,13 +142,13 @@ export default function IceIslandScene() {
         ref={penguinRef}
         position={[-6, getIslandY(-6, 8), 8]}
         externalVelocity={joystickVelocity}
-        scale={0.7}
+        scale={3}
       />
-      <primitive object={plane.scene} scale={1.2} position={[-6, getIslandY(-6, 8), 8]} />
-      <Igloo penguinRef={penguinRef} position={[7, getIslandY(7, -6), -6]} scale={1.5} />
-      <Fox penguinRef={penguinRef} position={[-10, getIslandY(-10, -10), -10]} scale={0.7} />
-      <Orca penguinRef={penguinRef} position={[12, getIslandY(12, 12), 12]} scale={1.5} />
-      <Petrel penguinRef={penguinRef} position={[4, getIslandY(4, 5), 5]} scale={0.5} />
+      <primitive object={plane.scene} position={[-6, getIslandY(-6, 8), 6]} scale={0.008} />
+      <Igloo penguinRef={penguinRef} position={[-5, getIslandY(7, -6), -6]} scale={6} />
+      <Fox penguinRef={penguinRef} position={[5, getIslandY(0, 0), -5]} scale={0.4} />
+      <Orca penguinRef={penguinRef} position={[0, 20, 0]} scale={1000} />
+      <Petrel penguinRef={penguinRef} position={[7, getIslandY(2, 25), 5]} scale={4} nestScale={8} />
     </>
   )
 }

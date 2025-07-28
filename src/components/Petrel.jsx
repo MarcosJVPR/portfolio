@@ -3,7 +3,7 @@ import { useGLTF, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from '../store/useGameStore'
 
-export default function Petrel({ penguinRef, position = [4, 0, -3] }) {
+export default function Petrel({ penguinRef, position = [4, 0, -3], scale = 1, nestScale = 5, yOffset = 0.5 }) {
   const petrel = useGLTF('/assets/models/petrel.glb')
   const nest = useGLTF('/assets/models/nest.glb')
   const petrelRef = useRef()
@@ -31,12 +31,12 @@ export default function Petrel({ penguinRef, position = [4, 0, -3] }) {
 
   return (
     <>
-      <primitive object={nest.scene} scale={0.6} position={position} />
+      <primitive object={nest.scene} scale={nestScale} position={position} />
       <primitive
         ref={petrelRef}
         object={petrel.scene}
-        scale={0.3}
-        position={[position[0], position[1] + 0.4, position[2]]}
+        scale={scale}
+        position={[position[0], position[1] + yOffset, position[2]]}
       />
       {showText && (
         <Html position={[position[0], position[1] + 1.4, position[2]]}>

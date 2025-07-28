@@ -3,7 +3,7 @@ import { useGLTF, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from '../store/useGameStore'
 
-export default function Igloo({ penguinRef, position = [0, 0, -10] }) {
+export default function Igloo({ penguinRef, position = [0, 0, -10], scale = 1 }) {
   const { scene } = useGLTF('/assets/models/igloo.glb')
   const iglooRef = useRef()
   const [showText, setShowText] = useState(false)
@@ -29,7 +29,7 @@ export default function Igloo({ penguinRef, position = [0, 0, -10] }) {
 
   return (
     <>
-      <primitive ref={iglooRef} object={scene} scale={0.6} position={position} />
+      <primitive ref={iglooRef} object={scene} scale={scale} position={position} />
       {showText && (
         <Html position={[position[0], position[1] + 2, position[2]]}>
           <div

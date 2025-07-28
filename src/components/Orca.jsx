@@ -3,7 +3,7 @@ import { useGLTF, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from '../store/useGameStore'
 
-export default function Orca({ penguinRef, position = [-5, 0, -12] }) {
+export default function Orca({ penguinRef, position = [-5, 0, -12], scale = 1 }) {
   const { scene } = useGLTF('/assets/models/orca.glb')
   const orcaRef = useRef()
   const [showText, setShowText] = useState(false)
@@ -30,7 +30,7 @@ export default function Orca({ penguinRef, position = [-5, 0, -12] }) {
 
   return (
     <>
-      <primitive ref={orcaRef} object={scene} scale={0.8} position={position} />
+      <primitive ref={orcaRef} object={scene} scale={scale} position={position} />
       {showText && (
         <Html position={[position[0], position[1] + 2, position[2]]}>
           <div

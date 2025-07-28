@@ -129,6 +129,10 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
       group.current.position.add(localVelocity.current)
       // Make the penguin walk flat
       group.current.position.y = 0.7
+      // Rotate penguin to face movement
+      if (localVelocity.current.length() > 0.01) {
+        group.current.rotation.y = Math.atan2(localVelocity.current.x, localVelocity.current.z)
+      }
     }
   })
 
