@@ -3,7 +3,7 @@ import { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 're
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
-const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => {
+const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity, getGroundY, walls = [] }, ref) => {
   const group = useRef()
   const { nodes, animations, scene } = useGLTF('/assets/models/penguin.glb')
   const { actions } = useAnimations(animations, group)
@@ -11,6 +11,8 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
 
   const keys = useRef({})
   const localVelocity = useRef(new THREE.Vector3())
+  const verticalVelocity = useRef(0)
+  const isGrounded = useRef(false)
 
   const stepSound = useRef()
   const talkSound = useRef()
@@ -18,6 +20,30 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
   const [audioReady, setAudioReady] = useState(false)
   const isWalking = useRef(false)
   const isIdleTalking = useRef(false)
+
+  // Collision detection function
+  const checkWallCollision = (newX, newZ) => {
+    for (const wall of walls) {
+      const [wallX, wallY, wallZ] = wall.position
+      const [wallW, wallH, wallD] = wall.size
+
+      // Check if penguin would collide with wall
+      const penguinRadius = 1.5 // Approximate penguin size
+      const wallLeft = wallX - wallW / 2
+      const wallRight = wallX + wallW / 2
+      const wallFront = wallZ - wallD / 2
+      const wallBack = wallZ + wallD / 2
+
+      if (newX + penguinRadius > wallLeft &&
+        newX - penguinRadius < wallRight &&
+        newZ + penguinRadius > wallFront &&
+        newZ - penguinRadius < wallBack) {
+        console.log('Wall collision detected!', { newX, newZ, wallX, wallZ, wallW, wallD })
+        return true
+      }
+    }
+    return false
+  }
 
   useImperativeHandle(ref, () => ({
     group: group.current
@@ -82,6 +108,8 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
 
   useFrame((_, delta) => {
     const speed = 2
+    const gravity = 12
+    const jumpSpeed = 5
     localVelocity.current.set(0, 0, 0)
 
     if (keys.current['w'] || keys.current['arrowup']) localVelocity.current.z -= speed * delta
@@ -126,9 +154,39 @@ const Penguin = forwardRef(({ position = [0, 0, 0], externalVelocity }, ref) => 
     }
 
     if (group.current) {
-      group.current.position.add(localVelocity.current)
-      // Make the penguin walk flat
-      group.current.position.y = 0.7
+      const current = group.current.position
+
+      // Check collision before moving
+      const newX = current.x + localVelocity.current.x
+      const newZ = current.z + localVelocity.current.z
+
+      // Only move if no collision
+      if (!checkWallCollision(newX, current.z)) {
+        current.x = newX
+      }
+      if (!checkWallCollision(current.x, newZ)) {
+        current.z = newZ
+      }
+
+      // Jump
+      if (keys.current['j'] && isGrounded.current) {
+        verticalVelocity.current = jumpSpeed
+        isGrounded.current = false
+      }
+
+      // Gravity and ground follow
+      verticalVelocity.current -= gravity * delta
+      let tentativeY = current.y + verticalVelocity.current * delta
+      const groundY = typeof getGroundY === 'function' ? getGroundY(current.x, current.z) : 0
+      const bodyOffset = 0.05
+      if (tentativeY <= groundY + bodyOffset) {
+        tentativeY = groundY + bodyOffset
+        verticalVelocity.current = 0
+        isGrounded.current = true
+      } else {
+        isGrounded.current = false
+      }
+      current.y = tentativeY
       // Rotate penguin to face movement
       if (localVelocity.current.length() > 0.01) {
         group.current.rotation.y = Math.atan2(localVelocity.current.x, localVelocity.current.z)

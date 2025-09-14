@@ -20,22 +20,26 @@ export default function Fox({ penguinRef, position = [0, 0, 0], scale = 1 }) {
     soundRef.current = sound
   }, [])
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (!penguinRef?.current?.group || !group.current) return
-    const distance = penguinRef.current.group.position.distanceTo(group.current.position)
 
-    if (distance < 2) {
-      setSection('habilidades')
-      setShowText(true)
+    // Only check distance every few frames to reduce performance impact
+    if (state.clock.elapsedTime % 0.1 < delta) {
+      const distance = penguinRef.current.group.position.distanceTo(group.current.position)
 
-      if (!hasPlayedRef.current && soundRef.current) {
-        soundRef.current.currentTime = 0
-        soundRef.current.play()
-        hasPlayedRef.current = true
+      if (distance < 2) {
+        setSection('habilidades')
+        setShowText(true)
+
+        if (!hasPlayedRef.current && soundRef.current) {
+          soundRef.current.currentTime = 0
+          soundRef.current.play()
+          hasPlayedRef.current = true
+        }
+      } else {
+        hasPlayedRef.current = false
+        setShowText(false)
       }
-    } else {
-      hasPlayedRef.current = false
-      setShowText(false)
     }
   })
 
