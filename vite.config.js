@@ -5,7 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    host: true,
     port: 5173,
     strictPort: true,
     allowedHosts: ['.app.github.dev', '.github.dev', 'localhost'],
@@ -14,7 +13,6 @@ export default defineConfig({
     }
   },
   preview: {
-    host: true,
     port: 4173,
     allowedHosts: ['.app.github.dev', '.github.dev', 'localhost']
   },
@@ -22,8 +20,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 900,
     rollupOptions: {
       output: {
-        manualChunks: {
-          three: ['three', '@react-three/fiber']
+        manualChunks(id) {
+          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) return 'three'
         }
       }
     }

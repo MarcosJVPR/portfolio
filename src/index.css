@@ -453,7 +453,7 @@ a {
   inset: 0;
   z-index: 58;
   pointer-events: none;
-  background-image: url('/textura/crayon.png');
+  background-image: url('/textura/crayon.webp');
   background-size: 780px 780px;
   background-repeat: repeat;
   mix-blend-mode: multiply;
@@ -470,7 +470,9 @@ a {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-image: url('/arte/nube-seccion.webp');
+  background-image: url('/arte/nube-seccion-1920.webp');
+  background-image: -webkit-image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
+  background-image: image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
   background-size: cover;
   background-position: center top;
   opacity: 0.85;
@@ -485,7 +487,9 @@ a {
   height: 34vh;
   z-index: 10;
   pointer-events: none;
-  background-image: url('/arte/nube-seccion.webp');
+  background-image: url('/arte/nube-seccion-1920.webp');
+  background-image: -webkit-image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
+  background-image: image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
   background-size: cover;
   background-position: center bottom;
   mask-image: linear-gradient(to bottom, transparent 0%, black 46%);
@@ -509,7 +513,9 @@ article[id] {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-image: url('/arte/nube-seccion.webp');
+  background-image: url('/arte/nube-seccion-1920.webp');
+  background-image: -webkit-image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
+  background-image: image-set(url('/arte/nube-seccion-1920.webp') 1x, url('/arte/nube-seccion-2560.webp') 2x);
   background-size: cover;
   background-position: center bottom;
   opacity: 0.92;

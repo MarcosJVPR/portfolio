@@ -12,8 +12,8 @@ export default function Hero() {
   return (
     <section id="inicio" className="relative flex min-h-screen flex-col justify-end overflow-hidden">
       <img
-        src="/arte/hero-ciudad.webp"
-        srcSet="/arte/hero-ciudad-1280.webp 1280w, /arte/hero-ciudad.webp 2560w"
+        src="/arte/hero-ciudad-1920.webp"
+        srcSet="/arte/hero-ciudad-1280.webp 1280w, /arte/hero-ciudad-1920.webp 1920w, /arte/hero-ciudad-2560.webp 2560w"
         sizes="100vw"
         alt=""
         aria-hidden="true"

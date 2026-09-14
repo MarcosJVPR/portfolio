@@ -2,7 +2,7 @@ import { chromium } from 'playwright'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
-const SALIDA = 'public/projects'
+const SALIDA = 'medios/projects'
 const ANCHO = 1600
 const ALTO = 1100
 
