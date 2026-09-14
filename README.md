@@ -1,81 +1,73 @@
-# WebApp boilerplate with React JS and Flask API
+# Portafolio · Marcos Pérez
 
-Build web applications using React.js for the front end and python/flask for your backend API.
+Sitio personal bilingüe (ES/EN) con dirección de arte Solarpunk + Yoshi's Island.
+React 18 + Vite + Tailwind 4 + Three.js + React Router 6, sin plantillas ni
+componentes de terceros.
 
-- Documentation can be found here: https://4geeks.com/docs/start/react-flask-template
-- Here is a video on [how to use this template](https://www.loom.com/share/f37c6838b3f1496c95111e515e83dd9b)
-- Integrated with Pipenv for package managing.
-- Fast deployment to Render [in just a few steps here](https://4geeks.com/docs/start/deploy-to-render-com).
-- Use of .env file.
-- SQLAlchemy integration for database abstraction.
+## Arrancar
 
-### 1) Installation:
-
-> If you use Github Codespaces (recommended) or Gitpod this template will already come with Python, Node and the Posgres Database installed. If you are working locally make sure to install Python 3.10, Node 
-
-It is recomended to install the backend first, make sure you have Python 3.10, Pipenv and a database engine (Posgress recomended)
-
-1. Install the python packages: `$ pipenv install`
-2. Create a .env file based on the .env.example: `$ cp .env.example .env`
-3. Install your database engine and create your database, depending on your database you have to create a DATABASE_URL variable with one of the possible values, make sure you replace the valudes with your database information:
-
-| Engine    | DATABASE_URL                                        |
-| --------- | --------------------------------------------------- |
-| SQLite    | sqlite:////test.db                                  |
-| MySQL     | mysql://username:password@localhost:port/example    |
-| Postgress | postgres://username:password@localhost:5432/example |
-
-4. Migrate the migrations: `$ pipenv run migrate` (skip if you have not made changes to the models on the `./src/api/models.py`)
-5. Run the migrations: `$ pipenv run upgrade`
-6. Run the application: `$ pipenv run start`
-
-> Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
-
-### Undo a migration
-
-You are also able to undo a migration by running
-
-```sh
-$ pipenv run downgrade
+```bash
+npm install
+npm run dev
+npm run build
+npm test
 ```
 
-### Backend Populate Table Users
+## Rutas
 
-To insert test users in the database execute the following command:
+- `/` portada con hero, proyectos, decisiones difíciles, sobre mí y contacto.
+- `/proyectos/:slug` caso completo de cada proyecto. Los slugs son
+  `lente-democratica`, `zolarium`, `pyme-copilot` y `travel-to-spain`.
+- Cualquier otra ruta cae en la página 404.
 
-```sh
-$ flask insert-test-users 5
-```
+`vercel.json` reescribe todas las rutas a `index.html`, que es lo que evita el 404
+del servidor cuando alguien recarga estando en una página de detalle.
 
-And you will see the following message:
+## Lo que tienes que reemplazar antes de publicar
 
-```
-  Creating test users
-  test_user1@test.com created.
-  test_user2@test.com created.
-  test_user3@test.com created.
-  test_user4@test.com created.
-  test_user5@test.com created.
-  Users created successfully!
-```
+1. **Capturas de los proyectos** en `public/projects/`. Ahora mismo hay marcadores
+   generados. Cada proyecto necesita cinco imágenes de 1600×1100:
+   - `<id>.jpg` captura real del sitio, la que se ve en reposo en la tarjeta.
+   - `<id>-arte.jpg` ilustración Solarpunk que revela el efecto obturador al hover.
+   - `<id>-1.jpg`, `<id>-2.jpg`, `<id>-3.jpg` galería de la página de detalle.
 
-### **Important note for the database and the data inside it**
+   Los `<id>` son `lente`, `zolarium`, `copilot` y `travel`.
+2. **Los enlaces a repositorios** en `src/data/projects.js`. Sólo Zolarium tiene
+   uno puesto; los demás están en `null` y el botón de código no se renderiza hasta
+   que los rellenes. Si un repo es privado, déjalo en `null`.
+3. **`public/og.png`**, imagen de 1200×630 para cuando compartas el enlace.
+4. **`public/cv/Marcos_Perez_CV.pdf`** contiene tu CV actual. Sustitúyelo cuando lo
+   actualices y los botones de descarga seguirán funcionando.
 
-Every Github codespace environment will have **its own database**, so if you're working with more people eveyone will have a different database and different records inside it. This data **will be lost**, so don't spend too much time manually creating records for testing, instead, you can automate adding records to your database by editing ```commands.py``` file inside ```/src/api``` folder. Edit line 32 function ```insert_test_data``` to insert the data according to your model (use the function ```insert_test_users``` above as an example). Then, all you need to do is run ```pipenv run insert-test-data```.
+## Rendimiento
 
-### Front-End Manual Installation:
+El presupuesto está en la ruta crítica, no en el total:
 
--   Make sure you are using node version 20 and that you have already successfully installed and runned the backend.
+| Recurso | Tamaño gzip | Cuándo se descarga |
+|---|---|---|
+| JS de aplicación | ~71 kB | siempre |
+| CSS | ~6 kB | siempre |
+| Three.js + escena | ~222 kB | sólo escritorio, tras `requestIdleCallback` |
 
-1. Install the packages: `$ npm install`
-2. Start coding! start the webpack dev server `$ npm run start`
+La escena WebGL no se carga si el usuario tiene `prefers-reduced-motion`, si la
+pantalla mide menos de 720 px, si el dispositivo declara menos de 4 GB de memoria
+o menos de 4 núcleos. En esos casos se ve `.respaldo-estatico`, un degradado CSS
+con la misma paleta. El texto del hero es HTML plano y no espera a nada, así que
+el LCP no depende de Three.js.
 
-## Publish your website!
+## Dirección de arte
 
-This boilerplate it's 100% read to deploy with Render.com and Heroku in a matter of minutes. Please read the [official documentation about it](https://4geeks.com/docs/start/deploy-to-render-com).
+El efecto de dibujo sobre imagen se compone en tres capas:
 
-### Contributors
+- Fotografía o render de fondo.
+- Trazos SVG con los filtros `trazoIrregular` y `lavadoAcuarela`, que aplican
+  `feTurbulence` + `feDisplacementMap` para romper la línea perfecta del vector.
+- Grano de papel fijo a pantalla completa en `mix-blend-mode: multiply`.
 
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
+Tipografía: Fraunces con los ejes `SOFT` y `WONK` activados para los titulares,
+Karla para el resto.
 
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
+## Despliegue en Vercel
+
+Framework preset Vite, build `npm run build`, directorio de salida `dist`.
+Sin variables de entorno.

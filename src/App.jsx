@@ -1,58 +1,30 @@
-import { Canvas } from '@react-three/fiber'
-import { Suspense, useEffect } from 'react'
-import { Loader } from '@react-three/drei'
-import IceIslandScene from './scenes/IceIslandScene'
-import UIControls from './components/UIControls'
-import LanguageToggle from './components/LanguageToggle'
-import SectionViewer from './components/SectionViewer'
-import Joystick from './components/Joystick'
-import { useGameStore } from './store/useGameStore'
-import bgMusicSrc from './assets/sounds/bg-music.mp3'
-import './styles/main.css'
+import { Route, Routes } from 'react-router-dom'
+import BarraSuperior from './components/BarraSuperior'
+import SketchFilters from './components/SketchFilters'
+import Grano from './components/Grano'
+import MarcoPapel from './components/MarcoPapel'
+import Destellos from './components/Destellos'
+import DesplazarArriba from './components/DesplazarArriba'
+import Inicio from './paginas/Inicio'
+import ProyectoDetalle from './paginas/ProyectoDetalle'
+import NoEncontrado from './paginas/NoEncontrado'
 
-function App() {
-  const lang = useGameStore(state => state.language)
-
-  useEffect(() => {
-    const bgMusic = new Audio(bgMusicSrc)
-    bgMusic.loop = true
-    bgMusic.volume = 0.4
-
-    const playMusic = () => {
-      const playPromise = bgMusic.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(e => console.warn('Autoplay bloqueado:', e));
-      }
-      document.removeEventListener('click', playMusic)
-    }
-
-    document.addEventListener('click', playMusic)
-
-    return () => {
-      bgMusic.pause()
-      document.removeEventListener('click', playMusic)
-    }
-  }, [])
-
+export default function App() {
   return (
     <>
-      <LanguageToggle />
-      <SectionViewer />
-
-      <Canvas shadows camera={{ position: [0, 3, 5], fov: 45 }}>
-        <ambientLight intensity={0.7} />
-        <Suspense fallback={null}>
-          <IceIslandScene />
-          <UIControls />
-        </Suspense>
-      </Canvas>
-
-      <Loader />
-
-      {/* 🕹️ Joystick FUERA del Canvas */}
-      <Joystick />
+      <SketchFilters />
+      <DesplazarArriba />
+      <BarraSuperior />
+      <main>
+        <Routes>
+          <Route path="/" element={<Inicio />} />
+          <Route path="/proyectos/:slug" element={<ProyectoDetalle />} />
+          <Route path="*" element={<NoEncontrado />} />
+        </Routes>
+      </main>
+      <Destellos />
+      <Grano />
+      <MarcoPapel />
     </>
   )
 }
-
-export default App
