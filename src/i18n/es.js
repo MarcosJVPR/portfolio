@@ -23,22 +23,22 @@ export default {
   hero: {
     nombre: 'Marcos Pérez',
     rol: 'Fullstack developer en Madrid',
-    titulo: 'Tecnología que deja el sitio mejor de como lo encontró.',
+    titulo: 'Deja el sitio mejor de como lo encontró.',
     entrada:
-      'Construyo producto con React, TypeScript y Node: transparencia parlamentaria a partir de datos abiertos, una app publicada en Google Play y sistemas de IA que citan sus fuentes.',
+      'React, TypeScript y Node. Datos abiertos, apps offline e IA que cita sus fuentes.',
     ctaProyectos: 'Ver proyectos',
     ctaCv: 'Descargar CV',
     disponibilidad: 'Disponible para posiciones fullstack en Madrid o en remoto',
     marcadores: [
-      { cifra: '4', texto: 'productos en producción con dominio propio' },
-      { cifra: '3+', texto: 'años construyendo web con React y Node' },
-      { cifra: '2', texto: 'idiomas de trabajo: español nativo, inglés C2' }
+      { cifra: '−25%', texto: 'de tiempo de carga en lo que pongo en producción' },
+      { cifra: '3+', texto: 'años construyendo para la web' },
+      { cifra: '2', texto: 'idiomas de trabajo, español e inglés' }
     ]
   },
   proyectos: {
-    titulo: 'Cuatro productos, no cuatro maquetas',
+    titulo: 'Algunos proyectos a los que he dado vida',
     entrada:
-      'Todo lo que hay aquí está desplegado y se puede abrir ahora mismo. Debajo de cada uno está la decisión técnica que costó más pensar.',
+      'Ábrelos. Debajo, la decisión que más me costó.',
     verSitio: 'Abrir el sitio',
     verCodigo: 'Ver el código',
     destacado: 'Proyecto principal',

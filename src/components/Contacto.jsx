@@ -4,7 +4,7 @@ export default function Contacto() {
   const { t } = useLang()
 
   return (
-    <section id="contacto" className="seccion relative overflow-hidden pb-48">
+    <section id="contacto" className="seccion relative overflow-hidden pb-40">
       <div className="envoltura relative z-20">
         <h2 className="subrayado-sol inline">{t.contacto.titulo}</h2>
         <p className="mt-6 text-lg">{t.contacto.entrada}</p>
@@ -33,10 +33,6 @@ export default function Contacto() {
             {t.contacto.cv}
           </a>
         </div>
-
-        <p className="mt-16 text-sm" style={{ color: 'var(--color-tinta-suave)' }}>
-          {t.contacto.pie}
-        </p>
       </div>
       <div className="banda-prado" aria-hidden="true" />
     </section>

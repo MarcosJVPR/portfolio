@@ -104,11 +104,11 @@ describe('navegación e idioma', () => {
         <Proyectos />
       </>
     )
-    expect(screen.getByText(/cuatro productos, no cuatro maquetas/i)).toBeInTheDocument()
+    expect(screen.getByText(/algunos proyectos a los que he dado vida/i)).toBeInTheDocument()
 
     await usuario.click(screen.getByRole('button', { name: /cambiar idioma/i }))
 
-    expect(screen.getByText(/four products, not four mockups/i)).toBeInTheDocument()
+    expect(screen.getByText(/some projects i brought to life/i)).toBeInTheDocument()
     expect(document.documentElement.lang).toBe('en')
   })
 

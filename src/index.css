@@ -461,8 +461,8 @@ a {
   padding: 0.85rem 1rem 0.95rem;
   border: 1.5px solid color-mix(in oklab, var(--color-tinta) 22%, transparent);
   border-radius: 1.6rem 1.9rem 1.7rem 2rem;
-  background: color-mix(in oklab, var(--color-papel) 62%, transparent);
-  backdrop-filter: blur(9px) saturate(1.1);
+  background: color-mix(in oklab, var(--color-papel) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
   box-shadow:
     inset 0 1px 0 color-mix(in oklab, white 55%, transparent),
     0 14px 30px -18px color-mix(in oklab, var(--color-tinta) 70%, transparent);
@@ -497,8 +497,22 @@ a {
 }
 
 .hero-burbuja .hero-marcador-texto {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   max-width: none;
+  color: var(--color-tinta);
+  text-shadow: 0 1px 0 color-mix(in oklab, var(--color-papel) 85%, transparent);
+}
+
+.hero-burbuja .hero-marcador-cifra {
+  text-shadow: 0 1px 0 color-mix(in oklab, var(--color-papel) 85%, transparent);
+}
+
+.hero-burbuja.arrastrando {
+  animation: none;
+  transition: none;
+  cursor: grabbing;
+  will-change: transform;
+  z-index: 2;
 }
 
 .hero-burbuja:nth-child(1) {
@@ -681,6 +695,146 @@ a {
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 600;
+}
+
+.trayectoria-rejilla {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .trayectoria-rejilla {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    align-items: start;
+  }
+}
+
+.trayectoria-jardin {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .trayectoria-jardin {
+    display: block;
+    position: sticky;
+    top: 7rem;
+  }
+}
+
+.planta {
+  width: 100%;
+  max-width: 13rem;
+  margin-inline: auto;
+}
+
+.planta-tallo {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+}
+
+.planta-hoja,
+.planta-flor {
+  opacity: 0;
+}
+
+.planta-hoja-1 {
+  transform-origin: 98px 318px;
+}
+
+.planta-hoja-2 {
+  transform-origin: 100px 254px;
+}
+
+.planta-hoja-3 {
+  transform-origin: 98px 196px;
+}
+
+.planta-flor {
+  transform-origin: 100px 106px;
+}
+
+.planta-crecida .planta-tallo {
+  animation: brotarTallo 1900ms cubic-bezier(0.32, 0.9, 0.35, 1) forwards;
+}
+
+.planta-crecida .planta-hoja {
+  animation: abrirHoja 700ms cubic-bezier(0.22, 1.35, 0.4, 1) forwards;
+}
+
+.planta-crecida .planta-hoja-1 {
+  animation-delay: 620ms;
+}
+
+.planta-crecida .planta-hoja-2 {
+  animation-delay: 1020ms;
+}
+
+.planta-crecida .planta-hoja-3 {
+  animation-delay: 1380ms;
+}
+
+.planta-crecida .planta-flor {
+  animation: abrirFlor 900ms cubic-bezier(0.22, 1.3, 0.4, 1) forwards;
+  animation-delay: 1780ms;
+}
+
+.planta-crecida .planta-petalos {
+  transform-origin: 100px 106px;
+  animation: girarPetalos 1400ms cubic-bezier(0.25, 1, 0.4, 1) forwards;
+  animation-delay: 1780ms;
+}
+
+@keyframes brotarTallo {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes abrirHoja {
+  from {
+    opacity: 0;
+    scale: 0.2;
+    rotate: -18deg;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    rotate: 0deg;
+  }
+}
+
+@keyframes abrirFlor {
+  from {
+    opacity: 0;
+    scale: 0.15;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes girarPetalos {
+  from {
+    rotate: -26deg;
+  }
+  to {
+    rotate: 0deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planta-crecida .planta-tallo,
+  .planta-crecida .planta-hoja,
+  .planta-crecida .planta-flor,
+  .planta-crecida .planta-petalos {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
+
+.sobre-parrafos {
+  font-size: 0.97rem;
 }
 
 .retrato-bloque {
@@ -992,7 +1146,8 @@ a {
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  height: 34vh;
+  height: 30vh;
+  bottom: -5vh;
   z-index: 10;
   pointer-events: none;
   background-image: url('/arte/nube-seccion-1920.webp');
@@ -1099,6 +1254,13 @@ article[id] {
 .carta-caja:active {
   cursor: grabbing;
   box-shadow: 0 26px 46px -18px rgba(22, 52, 43, 0.7);
+}
+
+.carta-arrastrando {
+  transition: none !important;
+  transition-delay: 0ms !important;
+  will-change: transform;
+  cursor: grabbing;
 }
 
 .carta-abierta {

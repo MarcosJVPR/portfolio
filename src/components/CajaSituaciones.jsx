@@ -60,42 +60,67 @@ export default function CajaSituaciones() {
     setCartas((previas) => previas.map((carta) => (carta.id === id ? { ...carta, z } : carta)))
   }, [])
 
+  const pintar = useCallback(() => {
+    const activo = arrastre.current
+    if (!activo) return
+    activo.cuadro = 0
+    activo.nodo.style.transform = `translate(-50%, -50%) translate(${activo.dx}px, ${activo.dy}px) scale(1)`
+  }, [])
+
   const alBajar = useCallback(
     (evento, id) => {
       if (evento.target.closest('button')) return
-      evento.currentTarget.setPointerCapture(evento.pointerId)
+      const nodo = evento.currentTarget
+      nodo.setPointerCapture(evento.pointerId)
+      nodo.classList.add('carta-arrastrando')
       const carta = cartas.find((item) => item.id === id)
       arrastre.current = {
         id,
+        nodo,
         inicioX: evento.clientX,
         inicioY: evento.clientY,
         baseX: carta.dx,
         baseY: carta.dy,
-        movido: false
+        dx: carta.dx,
+        dy: carta.dy,
+        movido: false,
+        cuadro: 0
       }
       alFrente(id)
     },
     [cartas, alFrente]
   )
 
-  const alMover = useCallback((evento) => {
-    const activo = arrastre.current
-    if (!activo) return
-    const dx = evento.clientX - activo.inicioX
-    const dy = evento.clientY - activo.inicioY
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) activo.movido = true
-    setCartas((previas) =>
-      previas.map((carta) => (carta.id === activo.id ? { ...carta, dx: activo.baseX + dx, dy: activo.baseY + dy } : carta))
-    )
-  }, [])
+  const alMover = useCallback(
+    (evento) => {
+      const activo = arrastre.current
+      if (!activo) return
+      const dx = evento.clientX - activo.inicioX
+      const dy = evento.clientY - activo.inicioY
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) activo.movido = true
+      activo.dx = activo.baseX + dx
+      activo.dy = activo.baseY + dy
+      if (!activo.cuadro) activo.cuadro = window.requestAnimationFrame(pintar)
+    },
+    [pintar]
+  )
 
   const alSoltar = useCallback((evento, id) => {
     const activo = arrastre.current
     if (evento.currentTarget.hasPointerCapture(evento.pointerId)) {
       evento.currentTarget.releasePointerCapture(evento.pointerId)
     }
-    if (activo && !activo.movido) {
-      setCartas((previas) => previas.map((carta) => (carta.id === id ? { ...carta, expandida: !carta.expandida } : carta)))
+    evento.currentTarget.classList.remove('carta-arrastrando')
+    if (activo) {
+      if (activo.cuadro) window.cancelAnimationFrame(activo.cuadro)
+      const { dx, dy, movido } = activo
+      arrastre.current = null
+      setCartas((previas) =>
+        previas.map((carta) =>
+          carta.id === id ? { ...carta, dx, dy, expandida: movido ? carta.expandida : !carta.expandida } : carta
+        )
+      )
+      return
     }
     arrastre.current = null
   }, [])
@@ -128,7 +153,6 @@ export default function CajaSituaciones() {
                   opacity: abierta ? 1 : 0,
                   transform: `translate(-50%, -50%) translate(${carta.dx}px, ${carta.dy}px) scale(${abierta ? 1 : 0.2})`,
                   transitionDelay: abierta ? `${indice * 110}ms` : '0ms',
-                  transitionDuration: arrastre.current?.id === carta.id ? '0ms' : undefined,
                   pointerEvents: abierta ? 'auto' : 'none',
                   borderTopColor: caso.acento
                 }}

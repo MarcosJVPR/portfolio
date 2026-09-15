@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useCallback, useRef, useState } from 'react'
 import { useLang } from '../i18n/LanguageContext'
 import { useEscenaActiva } from '../hooks/useEscenaActiva'
 import { useConsulta } from '../hooks/useConsulta'
@@ -8,19 +8,82 @@ import Monedas from './Monedas'
 const cargarEscena = () => import('./Scene')
 const Scene = lazy(cargarEscena)
 
-function Marcador({ marcador, indice, flotante }) {
-  const manejadores = flotante
-    ? {
-        onPointerEnter: () => encenderPulso(indice),
-        onPointerLeave: apagarPulso
-      }
-    : {}
+function Burbujas({ marcadores }) {
+  const [desplazos, setDesplazos] = useState({})
+  const arrastre = useRef(null)
+
+  const pintar = useCallback(() => {
+    const activo = arrastre.current
+    if (!activo) return
+    activo.cuadro = 0
+    activo.nodo.style.translate = `${activo.x}px ${activo.y}px`
+  }, [])
+
+  const alBajar = useCallback((evento, indice) => {
+    const nodo = evento.currentTarget
+    nodo.setPointerCapture(evento.pointerId)
+    nodo.classList.add('arrastrando')
+    const previo = arrastre.previos?.[indice] || { x: 0, y: 0 }
+    arrastre.current = {
+      indice,
+      nodo,
+      inicioX: evento.clientX,
+      inicioY: evento.clientY,
+      baseX: previo.x,
+      baseY: previo.y,
+      x: previo.x,
+      y: previo.y,
+      cuadro: 0
+    }
+    nodo.style.translate = `${previo.x}px ${previo.y}px`
+  }, [])
+
+  const alMover = useCallback(
+    (evento) => {
+      const activo = arrastre.current
+      if (!activo) return
+      activo.x = activo.baseX + (evento.clientX - activo.inicioX)
+      activo.y = activo.baseY + (evento.clientY - activo.inicioY)
+      if (!activo.cuadro) activo.cuadro = window.requestAnimationFrame(pintar)
+    },
+    [pintar]
+  )
+
+  const alSoltar = useCallback((evento) => {
+    const activo = arrastre.current
+    if (evento.currentTarget.hasPointerCapture(evento.pointerId)) {
+      evento.currentTarget.releasePointerCapture(evento.pointerId)
+    }
+    if (!activo) return
+    if (activo.cuadro) window.cancelAnimationFrame(activo.cuadro)
+    const { indice, x, y } = activo
+    arrastre.previos = { ...(arrastre.previos || {}), [indice]: { x, y } }
+    arrastre.current = null
+    setDesplazos((previas) => ({ ...previas, [indice]: { x, y } }))
+  }, [])
 
   return (
-    <li className={flotante ? 'hero-marcador hero-burbuja' : 'hero-marcador'} {...manejadores}>
-      <span className="hero-marcador-cifra">{marcador.cifra}</span>
-      <span className="hero-marcador-texto">{marcador.texto}</span>
-    </li>
+    <ul className="hero-burbujas">
+      {marcadores.map((marcador, indice) => {
+        const movida = desplazos[indice]
+        return (
+          <li
+            key={marcador.texto}
+            className={`hero-marcador hero-burbuja${movida ? ' arrastrando' : ''}`}
+            style={movida ? { translate: `${movida.x}px ${movida.y}px` } : undefined}
+            onPointerEnter={() => encenderPulso(indice)}
+            onPointerLeave={apagarPulso}
+            onPointerDown={(evento) => alBajar(evento, indice)}
+            onPointerMove={alMover}
+            onPointerUp={alSoltar}
+            onPointerCancel={alSoltar}
+          >
+            <span className="hero-marcador-cifra">{marcador.cifra}</span>
+            <span className="hero-marcador-texto">{marcador.texto}</span>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -53,13 +116,7 @@ export default function Hero() {
 
       <Monedas />
 
-      {haySitio && (
-        <ul className="hero-burbujas">
-          {t.hero.marcadores.map((marcador, indice) => (
-            <Marcador key={marcador.texto} marcador={marcador} indice={indice} flotante />
-          ))}
-        </ul>
-      )}
+      {haySitio && <Burbujas marcadores={t.hero.marcadores} />}
 
       <div className="envoltura hero-envoltura relative z-40 pb-14">
         <div className="cristal entrada hero-tarjeta inline-flex flex-col gap-3 rounded-[2rem] px-7 py-6">
@@ -81,8 +138,11 @@ export default function Hero() {
 
           {!haySitio && (
             <ul className="hero-marcadores">
-              {t.hero.marcadores.map((marcador, indice) => (
-                <Marcador key={marcador.texto} marcador={marcador} indice={indice} />
+              {t.hero.marcadores.map((marcador) => (
+                <li key={marcador.texto} className="hero-marcador">
+                  <span className="hero-marcador-cifra">{marcador.cifra}</span>
+                  <span className="hero-marcador-texto">{marcador.texto}</span>
+                </li>
               ))}
             </ul>
           )}

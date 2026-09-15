@@ -23,22 +23,22 @@ export default {
   hero: {
     nombre: 'Marcos Pérez',
     rol: 'Fullstack developer in Madrid',
-    titulo: 'Technology that leaves the place better than it found it.',
+    titulo: 'Leaves the place better than he found it.',
     entrada:
-      'I build products with React, TypeScript and Node: parliamentary transparency from open data, an app published on Google Play, and AI systems that cite their sources.',
+      'React, TypeScript and Node. Open data, offline apps, and AI that cites its sources.',
     ctaProyectos: 'See the work',
     ctaCv: 'Download CV',
     disponibilidad: 'Open to fullstack roles in Madrid or remote',
     marcadores: [
-      { cifra: '4', texto: 'products live in production on their own domain' },
-      { cifra: '3+', texto: 'years building for the web with React and Node' },
-      { cifra: '2', texto: 'working languages: native Spanish, C2 English' }
+      { cifra: '−25%', texto: 'load time on what I put in production' },
+      { cifra: '3+', texto: 'years shipping for the web' },
+      { cifra: '2', texto: 'working languages, Spanish and English' }
     ]
   },
   proyectos: {
-    titulo: 'Four products, not four mockups',
+    titulo: 'Some projects I brought to life',
     entrada:
-      'Everything here is deployed and you can open it right now. Under each one is the technical decision that took the most thinking.',
+      'Open any of them. Underneath, the decision that took the most thinking.',
     verSitio: 'Open the site',
     verCodigo: 'Read the code',
     destacado: 'Lead project',

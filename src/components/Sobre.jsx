@@ -44,14 +44,9 @@ export default function Sobre() {
             </figure>
           </div>
 
-          <div className="mt-7 grid gap-5">
-            {t.sobre.parrafos.map((parrafo) => (
-              <p key={parrafo.slice(0, 24)}>{parrafo}</p>
-            ))}
-          </div>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-6 lg:content-start">
           <div className="papel p-7" style={{ borderRadius: 'var(--radius-hoja)' }}>
             <h3 className="text-xl">{t.sobre.habilidadesTitulo}</h3>
             <dl className="mt-5 grid gap-4">
@@ -66,6 +61,12 @@ export default function Sobre() {
                 </div>
               ))}
             </dl>
+          </div>
+
+          <div className="grid gap-5 sobre-parrafos">
+            {t.sobre.parrafos.map((parrafo) => (
+              <p key={parrafo.slice(0, 24)}>{parrafo}</p>
+            ))}
           </div>
         </div>
       </div>
