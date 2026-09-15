@@ -5,12 +5,14 @@ export default {
     descripcion:
       'Fullstack developer en Madrid. React, TypeScript, Node y Python. Transparencia parlamentaria con datos abiertos, apps publicadas y sistemas de IA con fuentes verificables.'
   },
+  saltar: 'Saltar al contenido',
   nav: {
     abrir: 'Abrir menú',
     cerrar: 'Cerrar menú',
     secciones: 'Secciones',
     proyectos: 'Proyectos',
     casos: 'Cómo trabajo',
+    trayectoria: 'Trayectoria',
     sobre: 'Sobre mí',
     contacto: 'Contacto'
   },
@@ -19,9 +21,11 @@ export default {
     otro: 'English'
   },
   hero: {
+    nombre: 'Marcos Pérez',
+    rol: 'Fullstack developer en Madrid',
     titulo: 'Tecnología que deja el sitio mejor de como lo encontró.',
     entrada:
-      'Soy Marcos Pérez, fullstack developer en Madrid. Construyo producto con React, TypeScript y Node: transparencia parlamentaria a partir de datos abiertos, una app publicada en Google Play y sistemas de IA que citan sus fuentes.',
+      'Construyo producto con React, TypeScript y Node: transparencia parlamentaria a partir de datos abiertos, una app publicada en Google Play y sistemas de IA que citan sus fuentes.',
     ctaProyectos: 'Ver proyectos',
     ctaCv: 'Descargar CV',
     disponibilidad: 'Disponible para posiciones fullstack en Madrid o en remoto',
@@ -76,6 +80,7 @@ export default {
   },
   sobre: {
     titulo: 'Vengo del branding y acabé escribiendo el código',
+    retratoAlt: 'Retrato de Marcos Pérez',
     parrafos: [
       'Estudié un máster en Marketing y Branding antes de hacer un bootcamp intensivo de 400 horas, y esa mezcla se nota en cómo trabajo: me importa que la consulta sea rápida y me importa igual que la persona al otro lado entienda lo que está viendo.',
       'Ahora soy fullstack developer y coordinador en City Voice. Antes administré la infraestructura de red y los servidores de alta concurrencia de Zero Latency Madrid, donde aprendí que un servidor caído a las ocho de la tarde no acepta explicaciones largas.',
@@ -84,15 +89,73 @@ export default {
     habilidadesTitulo: 'Con lo que trabajo',
     habilidades: [
       { grupo: 'Frontend', items: 'React, TypeScript, Vite, Tailwind, Framer Motion, Vue 3, Redux' },
-      { grupo: 'Backend y datos', items: 'Node.js, Python, Flask, PostgreSQL, Supabase, MongoDB, REST' },
-      { grupo: 'Infraestructura', items: 'Vercel, Docker, Azure CI/CD, Git, Bash, Agile/Scrum' },
-      { grupo: 'Aprendiendo ahora', items: 'Vitest y Testing Library, React Query, Three.js' }
+      { grupo: 'Backend y datos', items: 'Node.js, Python, Flask, PostgreSQL, Supabase, MongoDB, SQL, REST' },
+      { grupo: 'Infraestructura', items: 'Vercel, Docker, Azure CI/CD, Git, GitHub, Bash, Agile/Scrum' },
+      { grupo: 'También he tocado', items: 'Java con JUnit, Three.js y shaders GLSL, Vitest y Testing Library' }
+    ]
+  },
+  trayectoria: {
+    titulo: 'Dónde he trabajado',
+    entrada: 'Tres años y medio en cuatro equipos, del frontend puro a la infraestructura de red.',
+    actual: 'Actual',
+    formacionTitulo: 'Formación',
+    puestos: [
+      {
+        empresa: 'City Voice',
+        puesto: 'Fullstack Developer y Coordinador',
+        periodo: '06/2025 — hoy',
+        lugar: 'Madrid',
+        resumen:
+          'Desarrollo de funcionalidades con React, TypeScript y Tailwind, con una reducción del 25% en los tiempos de carga. Coordino el flujo entre diseño y desarrollo.',
+        stack: ['React', 'TypeScript', 'Tailwind']
+      },
+      {
+        empresa: 'Zero Latency Madrid',
+        puesto: 'Software Engineer · Backend y Automatización',
+        periodo: '03/2024 — 05/2025',
+        lugar: 'Madrid',
+        resumen:
+          'Scripts propios de automatización en Python y Bash para la infraestructura de red, con un 30% menos de tiempo de inactividad. Administración de servidores y redes VR de alta concurrencia con 99%+ de disponibilidad.',
+        stack: ['Python', 'Bash', 'Linux', 'Redes']
+      },
+      {
+        empresa: 'UClinic Center',
+        puesto: 'Fullstack Web Developer',
+        periodo: '07/2023 — 02/2024',
+        lugar: 'Madrid',
+        resumen:
+          'Aplicaciones de cara a cliente con integraciones propias para automatizar el procesamiento de leads y la sincronización de datos en tiempo real. Mejora del 35% en visibilidad de búsqueda.',
+        stack: ['JavaScript', 'REST', 'SEO técnico']
+      },
+      {
+        empresa: 'Construcciones Acacias',
+        puesto: 'Frontend Developer',
+        periodo: '01/2023 — 06/2023',
+        lugar: 'Remoto',
+        resumen:
+          'Componentes de interfaz modulares y optimización de consultas a base de datos, con un 20% de mejora en la velocidad de renderizado.',
+        stack: ['JavaScript', 'CSS', 'SQL']
+      }
+    ],
+    formacion: [
+      {
+        centro: '4Geeks Academy',
+        titulo: 'Full-Stack Developer, 400+ horas intensivas',
+        periodo: '2024',
+        lugar: 'Madrid'
+      },
+      {
+        centro: 'Universidad del Rosario · UCM',
+        titulo: 'Máster en Marketing y Branding',
+        periodo: '2022 — 2024',
+        lugar: 'Bogotá y Madrid'
+      }
     ]
   },
   contacto: {
     titulo: 'Escríbeme',
     entrada:
-      'Respondo el mismo día. Si prefieres ver código antes de escribir, todos los repositorios están abiertos.',
+      'Respondo el mismo día. Si prefieres ver código antes de escribir, el repositorio de este sitio también está abierto.',
     email: 'perezmarcosjulio@gmail.com',
     telefono: '+34 672 059 796',
     ciudad: 'Madrid, España',
@@ -102,5 +165,13 @@ export default {
     ],
     cv: 'Descargar CV en PDF',
     pie: 'Hecho con React, Vite y Three.js. Sin plantillas.'
+  },
+  pie: {
+    lema: 'Fullstack developer en Madrid. Disponible para nuevos proyectos.',
+    navegacion: 'Secciones',
+    contactoTitulo: 'Contacto',
+    hecho: 'Hecho a mano con React, Vite, Tailwind y Three.js. Sin plantillas ni componentes de terceros.',
+    privacidad: 'Este sitio no usa cookies ni analítica de terceros.',
+    derechos: 'Marcos Pérez'
   }
 }

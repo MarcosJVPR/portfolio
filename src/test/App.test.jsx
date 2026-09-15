@@ -4,6 +4,9 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LanguageProvider } from '../i18n/LanguageContext'
 import Proyectos from '../components/Proyectos'
+import Hero from '../components/Hero'
+import Trayectoria from '../components/Trayectoria'
+import PieDePagina from '../components/PieDePagina'
 import BarraSuperior from '../components/BarraSuperior'
 import ProyectoDetalle from '../paginas/ProyectoDetalle'
 import CajaSituaciones from '../components/CajaSituaciones'
@@ -69,6 +72,17 @@ describe('navegación e idioma', () => {
     })
   })
 
+  it('cada tarjeta ofrece además el caso completo sin robarle el sitio al enlace en vivo', () => {
+    montar(<Proyectos />)
+    const casos = screen
+      .getAllByRole('link')
+      .map((enlace) => enlace.getAttribute('href'))
+      .filter((destino) => destino && destino.startsWith('/proyectos/'))
+    proyectos.forEach((proyecto) => {
+      expect(casos).toContain(`/proyectos/${proyecto.slug}`)
+    })
+  })
+
   it('la caja guarda las cartas hasta que se pulsa y luego las suelta', async () => {
     const usuario = userEvent.setup()
     montar(<CajaSituaciones />)
@@ -98,13 +112,13 @@ describe('navegación e idioma', () => {
     expect(document.documentElement.lang).toBe('en')
   })
 
-  it('la navegación de escritorio enlaza a las cuatro secciones de la portada', () => {
+  it('la navegación de escritorio enlaza a las cinco secciones de la portada', () => {
     montar(<BarraSuperior />)
     const navegacion = screen.getByRole('navigation')
     const destinos = within(navegacion)
       .getAllByRole('link')
       .map((enlace) => enlace.getAttribute('href'))
-    expect(destinos).toEqual(['/#proyectos', '/#casos', '/#sobre', '/#contacto'])
+    expect(destinos).toEqual(['/#proyectos', '/#casos', '/#trayectoria', '/#sobre', '/#contacto'])
   })
 
   it('la página de detalle muestra arquitectura, casos y proyecto siguiente', () => {
@@ -118,5 +132,44 @@ describe('navegación e idioma', () => {
     expect(screen.getByText(/cómo está construido/i)).toBeInTheDocument()
     expect(screen.getByText(/el hallazgo que decidí no publicar/i)).toBeInTheDocument()
     expect(screen.getByText(/siguiente proyecto/i)).toBeInTheDocument()
+  })
+})
+
+describe('portada para quien contrata', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+    window.localStorage.setItem('marcos-portfolio-idioma', 'es')
+  })
+
+  it('el hero tiene un h1 con el nombre y el rol', () => {
+    montar(<Hero />)
+    const titular = screen.getByRole('heading', { level: 1 })
+    expect(titular).toHaveTextContent(/marcos pérez/i)
+    expect(titular).toHaveTextContent(/fullstack/i)
+  })
+
+  it('el hero muestra la presentación y los tres marcadores', () => {
+    montar(<Hero />)
+    expect(screen.getByText(/react, typescript y node/i)).toBeInTheDocument()
+    const marcadores = screen.getAllByRole('listitem').filter((elemento) => elemento.className.includes('hero-marcador'))
+    expect(marcadores).toHaveLength(3)
+  })
+
+  it('la trayectoria lista las cuatro empresas en orden', () => {
+    montar(<Trayectoria />)
+    const empresas = ['City Voice', 'Zero Latency Madrid', 'UClinic Center', 'Construcciones Acacias']
+    empresas.forEach((empresa) => {
+      expect(screen.getByText(new RegExp(empresa, 'i'))).toBeInTheDocument()
+    })
+  })
+
+  it('el pie enlaza a LinkedIn, GitHub y al correo', () => {
+    montar(<PieDePagina />)
+    expect(screen.getByRole('link', { name: /linkedin/i })).toHaveAttribute('href', 'https://linkedin.com/in/marcosjvpr')
+    expect(screen.getByRole('link', { name: /github/i })).toHaveAttribute('href', 'https://github.com/MarcosJVPR')
+    expect(screen.getByRole('link', { name: /perezmarcosjulio/i })).toHaveAttribute(
+      'href',
+      'mailto:perezmarcosjulio@gmail.com'
+    )
   })
 })

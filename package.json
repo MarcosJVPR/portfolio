@@ -6,14 +6,15 @@
   "scripts": {
     "dev": "vite",
     "dev:red": "vite --host",
-    "build": "vite build",
+    "build": "node scripts/sitemap.mjs && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "capturas": "node scripts/capturas.mjs",
     "og": "node scripts/og.mjs",
     "imagenes": "node scripts/imagenes.mjs",
-    "cv": "node scripts/cv.mjs"
+    "cv": "node scripts/cv.mjs",
+    "sitemap": "node scripts/sitemap.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.17.10",

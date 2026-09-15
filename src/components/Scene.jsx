@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
+import { AdditiveBlending, BackSide, Color, DoubleSide } from 'three'
+import { pulso } from '../estado/pulso'
 
 const vertexCinta = `
 uniform float uTime;
@@ -59,23 +60,27 @@ varying float vSemilla;
 uniform float uTime;
 uniform float uPuntero;
 uniform float uEntrada;
+uniform float uPulso;
 varying float vEntrada;
+varying float vPulso;
 
 void main() {
   vSemilla = aSemilla;
   vEntrada = uEntrada;
+  vPulso = uPulso;
   vec3 pos = position;
   float pulso = sin(uTime * 0.65 + aSemilla * 6.2831) * 0.05;
 
-  float retardo = aSemilla * 0.45;
+  float retardo = aSemilla * 0.22;
   float avance = clamp((uEntrada - retardo) / (1.0 - retardo), 0.0, 1.0);
   float suave = avance * avance * (3.0 - 2.0 * avance);
-  float dispersion = mix(7.5 + aSemilla * 4.5, 1.0, suave);
+  float dispersion = mix(3.4 + aSemilla * 2.1, 1.0, suave);
 
   pos *= dispersion;
-  pos += normalize(pos) * (pulso + uPuntero * 0.09) * suave;
+  float empuje = uPulso * (0.14 + sin(uTime * 2.1 + aSemilla * 6.2831) * 0.05);
+  pos += normalize(pos) * (pulso + uPuntero * 0.09 + empuje) * suave;
   vec4 vista = modelViewMatrix * vec4(pos, 1.0);
-  gl_PointSize = (11.0 + aSemilla * 15.0) * (1.0 / -vista.z) * mix(0.3, 1.0, suave);
+  gl_PointSize = (11.0 + aSemilla * 15.0) * (1.0 + uPulso * 0.55) * (1.0 / -vista.z) * mix(0.3, 1.0, suave);
   gl_Position = projectionMatrix * vista;
 }
 `
@@ -84,6 +89,7 @@ const fragmentParticulas = `
 precision highp float;
 varying float vSemilla;
 varying float vEntrada;
+varying float vPulso;
 uniform vec3 uCobre;
 uniform vec3 uSol;
 uniform vec3 uCrema;
@@ -95,7 +101,8 @@ void main() {
   float borde = smoothstep(0.5, 0.05, r);
   vec3 color = mix(uCobre, uSol, vSemilla);
   color = mix(color, uCrema, smoothstep(0.82, 1.0, vSemilla));
-  gl_FragColor = vec4(color, borde * 0.92 * smoothstep(0.0, 0.5, vEntrada));
+  color = mix(color, uCrema, vPulso * 0.32);
+  gl_FragColor = vec4(color, borde * (0.92 + vPulso * 0.18) * smoothstep(0.0, 0.14, vEntrada));
 }
 `
 
@@ -115,24 +122,27 @@ const fragmentBurbuja = `
 precision highp float;
 uniform vec3 uCrema;
 uniform vec3 uCielo;
+uniform vec3 uSol;
+uniform float uPulso;
 varying vec3 vNormal;
 varying vec3 vVista;
 
 void main() {
-  float fresnel = pow(1.0 - max(dot(vNormal, vVista), 0.0), 2.4);
+  float fresnel = pow(1.0 - max(dot(vNormal, vVista), 0.0), 2.4 - uPulso * 0.9);
   vec3 color = mix(uCielo, uCrema, fresnel);
-  gl_FragColor = vec4(color, fresnel * 0.5);
+  color = mix(color, uSol, uPulso * 0.4);
+  gl_FragColor = vec4(color, fresnel * (0.5 + uPulso * 0.34));
 }
 `
 
 const PALETA = {
-  cielo: new THREE.Color('#79cfd6'),
-  menta: new THREE.Color('#a8dcc4'),
-  sol: new THREE.Color('#f4d07a'),
-  rosa: new THREE.Color('#efb0b8'),
-  lila: new THREE.Color('#c3b6de'),
-  cobre: new THREE.Color('#c2703d'),
-  crema: new THREE.Color('#fbf6e7')
+  cielo: new Color('#79cfd6'),
+  menta: new Color('#a8dcc4'),
+  sol: new Color('#f4d07a'),
+  rosa: new Color('#efb0b8'),
+  lila: new Color('#c3b6de'),
+  cobre: new Color('#c2703d'),
+  crema: new Color('#fbf6e7')
 }
 
 function CintaPrisma() {
@@ -164,7 +174,7 @@ function CintaPrisma() {
         fragmentShader={fragmentCinta}
         transparent
         depthWrite={false}
-        side={THREE.DoubleSide}
+        side={DoubleSide}
       />
     </mesh>
   )
@@ -196,6 +206,7 @@ function EsferaParticulas({ cantidad = 3400, radio = 1.22 }) {
       uTime: { value: 0 },
       uPuntero: { value: 0 },
       uEntrada: { value: 0 },
+      uPulso: { value: 0 },
       uCobre: { value: PALETA.cobre },
       uSol: { value: PALETA.sol },
       uCrema: { value: PALETA.crema }
@@ -206,11 +217,13 @@ function EsferaParticulas({ cantidad = 3400, radio = 1.22 }) {
   useFrame((estado, delta) => {
     if (!puntos.current || !material.current) return
     material.current.uniforms.uTime.value += delta
-    material.current.uniforms.uEntrada.value = Math.min(1, material.current.uniforms.uEntrada.value + delta / 2.6)
+    material.current.uniforms.uEntrada.value = Math.min(1, material.current.uniforms.uEntrada.value + delta / 0.85)
     const objetivo = estado.pointer.x * estado.pointer.x + estado.pointer.y * estado.pointer.y
     puntero.current += (objetivo - puntero.current) * 0.05
     material.current.uniforms.uPuntero.value = puntero.current
-    puntos.current.rotation.y += delta * 0.075
+    const actual = material.current.uniforms.uPulso.value
+    material.current.uniforms.uPulso.value = actual + (pulso.objetivo - actual) * Math.min(1, delta * 5.5)
+    puntos.current.rotation.y += delta * (0.075 + material.current.uniforms.uPulso.value * 0.14)
     puntos.current.rotation.x = estado.pointer.y * 0.22
     puntos.current.rotation.z = estado.pointer.x * 0.12
   })
@@ -228,31 +241,42 @@ function EsferaParticulas({ cantidad = 3400, radio = 1.22 }) {
         fragmentShader={fragmentParticulas}
         transparent
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={AdditiveBlending}
       />
     </points>
   )
 }
 
 function Burbuja({ radio = 1.34 }) {
+  const material = useRef()
+
   const uniforms = useMemo(
     () => ({
       uCrema: { value: PALETA.crema },
-      uCielo: { value: PALETA.cielo }
+      uCielo: { value: PALETA.cielo },
+      uSol: { value: PALETA.sol },
+      uPulso: { value: 0 }
     }),
     []
   )
+
+  useFrame((_, delta) => {
+    if (!material.current) return
+    const actual = material.current.uniforms.uPulso.value
+    material.current.uniforms.uPulso.value = actual + (pulso.objetivo - actual) * Math.min(1, delta * 5.5)
+  })
 
   return (
     <mesh renderOrder={1}>
       <sphereGeometry args={[radio, 48, 48]} />
       <shaderMaterial
+        ref={material}
         uniforms={uniforms}
         vertexShader={vertexBurbuja}
         fragmentShader={fragmentBurbuja}
         transparent
         depthWrite={false}
-        side={THREE.BackSide}
+        side={BackSide}
       />
     </mesh>
   )
@@ -263,7 +287,7 @@ export default function Scene() {
     <div className="lienzo-fondo" aria-hidden="true">
       <Canvas
         dpr={[1, 1.75]}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
         camera={{ position: [0, 0, 5], fov: 44 }}
       >
         <CintaPrisma />

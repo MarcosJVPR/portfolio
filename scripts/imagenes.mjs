@@ -9,6 +9,7 @@ const ESFUERZO = 6
 const TAREAS = [
   { fuente: 'medios/arte', destino: 'public/arte', modo: 'responsivo', anchos: [1280, 1920, 2560] },
   { fuente: 'medios/projects', destino: 'public/projects', modo: 'unico', ancho: 1280 },
+  { fuente: 'medios/retrato', destino: 'public/retrato', modo: 'responsivo', anchos: [320, 600] },
   { fuente: 'medios/textura', destino: 'public/textura', modo: 'sinPerdida' }
 ]
 
@@ -61,6 +62,8 @@ async function principal() {
   let generado = 0
   let original = 0
 
+  const vaciados = new Set()
+
   for (const tarea of TAREAS) {
     const archivos = await listar(tarea.fuente)
 
@@ -75,7 +78,11 @@ async function principal() {
     }
 
     console.log(`\n${tarea.fuente} -> ${tarea.destino}`)
-    await rm(tarea.destino, { recursive: true, force: true })
+
+    if (!vaciados.has(tarea.destino)) {
+      await rm(tarea.destino, { recursive: true, force: true })
+      vaciados.add(tarea.destino)
+    }
     await mkdir(tarea.destino, { recursive: true })
 
     for (const archivo of archivos) {

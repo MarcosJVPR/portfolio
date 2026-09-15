@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import ContadorMonedas from './ContadorMonedas'
 
 function ruido(semilla) {
   const valor = Math.sin(semilla * 97.3) * 43758.5453
@@ -82,10 +83,15 @@ export default function Monedas({ cantidad = 11 }) {
 
   const [recogidas, setRecogidas] = useState({})
   const [desplazos, setDesplazos] = useState({})
+  const [contador, setContador] = useState(0)
   const arrastre = useRef(null)
+  const yaRecogidas = useRef({})
 
   const recoger = useCallback((clave) => {
-    setRecogidas((previas) => (previas[clave] ? previas : { ...previas, [clave]: 'volando' }))
+    if (yaRecogidas.current[clave]) return
+    yaRecogidas.current[clave] = true
+    setContador((total) => total + 1)
+    setRecogidas((previas) => ({ ...previas, [clave]: 'volando' }))
     window.setTimeout(() => {
       setRecogidas((previas) => ({ ...previas, [clave]: 'fuera' }))
     }, 640)
@@ -120,7 +126,9 @@ export default function Monedas({ cantidad = 11 }) {
   }, [])
 
   return (
-    <div className="capa-piezas" aria-hidden="true">
+    <>
+      <ContadorMonedas total={contador} />
+      <div className="capa-piezas" aria-hidden="true">
       {iniciales.map((pieza) => {
         const estado = recogidas[pieza.clave]
         if (estado === 'fuera') return null
@@ -170,6 +178,7 @@ export default function Monedas({ cantidad = 11 }) {
           </span>
         )
       })}
-    </div>
+      </div>
+    </>
   )
 }

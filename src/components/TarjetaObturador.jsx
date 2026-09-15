@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useLang } from '../i18n/LanguageContext'
 import ArteProyecto from './ArteProyecto'
 
@@ -52,6 +53,9 @@ export default function TarjetaObturador({ proyecto }) {
           <a href={proyecto.url} target="_blank" rel="noreferrer" className="boton boton-hueco !py-2 !text-sm">
             {t.proyectos.verSitio}
           </a>
+          <Link to={`/proyectos/${proyecto.slug}`} className="enlace-caso">
+            {t.proyectos.verDetalle}
+          </Link>
           {proyecto.repo && (
             <a href={proyecto.repo} target="_blank" rel="noreferrer" className="text-sm font-semibold underline underline-offset-4">
               {t.proyectos.verCodigo}

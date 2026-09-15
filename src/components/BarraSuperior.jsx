@@ -44,6 +44,7 @@ export default function BarraSuperior() {
   const secciones = [
     { id: 'proyectos', texto: t.nav.proyectos },
     { id: 'casos', texto: t.nav.casos },
+    { id: 'trayectoria', texto: t.nav.trayectoria },
     { id: 'sobre', texto: t.nav.sobre },
     { id: 'contacto', texto: t.nav.contacto }
   ]
@@ -55,7 +56,7 @@ export default function BarraSuperior() {
           Marcos Pérez
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex" aria-label={t.nav.secciones}>
+        <nav className="hidden items-center gap-5 md:flex" aria-label={t.nav.secciones}>
           {secciones.map((seccion) => (
             <Link key={seccion.id} to={`/#${seccion.id}`} className="text-sm font-semibold transition-opacity hover:opacity-60">
               {seccion.texto}

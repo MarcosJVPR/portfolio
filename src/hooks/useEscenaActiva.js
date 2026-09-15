@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useReducedMotion } from './useReducedMotion'
 
-export function useEscenaActiva() {
+const ESPERA_MAXIMA = 700
+
+export function useEscenaActiva(precargar) {
   const [activa, setActiva] = useState(false)
   const reducido = useReducedMotion()
 
@@ -11,13 +13,25 @@ export function useEscenaActiva() {
     if (navigator.deviceMemory && navigator.deviceMemory < 4) return
     if (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4) return
 
-    const inactivo = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 900))
-    const id = inactivo(() => setActiva(true))
+    let cancelado = false
+
+    const arrancar = () => {
+      if (cancelado) return
+      if (precargar) precargar()
+      setActiva(true)
+    }
+
+    const soportaInactivo = typeof window.requestIdleCallback === 'function'
+    const id = soportaInactivo
+      ? window.requestIdleCallback(arrancar, { timeout: ESPERA_MAXIMA })
+      : window.setTimeout(arrancar, 200)
+
     return () => {
-      if (window.cancelIdleCallback) window.cancelIdleCallback(id)
+      cancelado = true
+      if (soportaInactivo && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(id)
       else window.clearTimeout(id)
     }
-  }, [reducido])
+  }, [reducido, precargar])
 
   return activa
 }

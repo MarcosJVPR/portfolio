@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { proyectos } from '../data/projects'
 import { useLang } from '../i18n/LanguageContext'
 import TarjetaObturador from './TarjetaObturador'
@@ -70,6 +71,9 @@ function Destacado({ proyecto }) {
           <a href={proyecto.url} target="_blank" rel="noreferrer" className="boton boton-solido">
             {t.proyectos.verSitio}
           </a>
+          <Link to={`/proyectos/${proyecto.slug}`} className="enlace-caso">
+            {t.proyectos.verDetalle}
+          </Link>
           {proyecto.repo && (
             <a href={proyecto.repo} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
               {t.proyectos.verCodigo}
